@@ -12,7 +12,7 @@
 	<artifactId>lojavaleriatamarindo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>lojavaleriatamarindo</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Projeto Loja Valeria Tamarindo</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
