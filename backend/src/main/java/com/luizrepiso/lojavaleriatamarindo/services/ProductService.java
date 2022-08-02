@@ -26,7 +26,7 @@ public class ProductService {
 
 	@Autowired
 	private ProductRepository repository;
-	
+
 	@Autowired
 	private CategoryRepository categoryRepository;
 
@@ -46,24 +46,24 @@ public class ProductService {
 
 	public ProductDTO insert(ProductDTO dto) {
 		Product entity = new Product();
-		copyDtoToEntity(dto, entity);		
+		copyDtoToEntity(dto, entity);
 		entity = repository.save(entity);
-		return new ProductDTO(entity);
+		return new ProductDTO(entity, entity.getCategories());
 
 	}
 
 	@Transactional
 	public ProductDTO update(Long id, ProductDTO dto) {
 		try {
-			Product entity = repository.getReferenceById(id);
-			copyDtoToEntity(dto, entity);				
+			Product entity = repository.findById(id).get();
+			copyDtoToEntity(dto, entity);
+			entity.setName(dto.getName());
 			entity = repository.save(entity);
-			return new ProductDTO(entity);
+			return new ProductDTO(entity, entity.getCategories());
 		} catch (EntityNotFoundException e) {
-			throw new ResourceNotFoundException("Id not found " + id);
+			throw new ResourceNotFoundException("Id not Found " + id);
 
 		}
-
 	}
 
 	public void delete(Long id) {
@@ -76,20 +76,19 @@ public class ProductService {
 		}
 
 	}
-	
 
 	private void copyDtoToEntity(ProductDTO dto, Product entity) {
-		
+
 		entity.setName(dto.getName());
 		entity.setDescription(dto.getDescription());
 		entity.setDate(dto.getDate());
 		entity.setImgUrl(dto.getImgUrl());
 		entity.setPrice(dto.getPrice());
-		
+
 		entity.getCategories().clear();
-		for(CategoryDTO catDto : dto.getCategories()) {
-			Category category = categoryRepository.getOne(catDto.getId());
-			entity.getCategories().add(category);
+		for (CategoryDTO catDto : dto.getCategories()) {
+			Optional<Category> category = categoryRepository.findById(catDto.getId());
+			entity.getCategories().add(category.get());
 		}
 
 	}
